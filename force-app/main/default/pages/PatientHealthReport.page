@@ -1,0 +1,168 @@
+<!-- URL to use: /apex/PatientHealthReport?id={Patient_Id} -->
+<!-- Renders as PDF showing full patient health summary -->
+<apex:page controller="PatientReportController"
+           renderAs="pdf"
+           applyBodyTag="false"
+           applyHtmlTag="false"
+           showHeader="false">
+
+<html>
+<head>
+    <style>
+        body        { font-family: Arial, sans-serif; font-size: 12px; color: #1a1a1a; margin: 0; padding: 20px; }
+        .header     { background: #0176d3; color: #fff; padding: 20px 24px; margin-bottom: 24px; }
+        .header h1  { margin: 0; font-size: 22px; }
+        .header p   { margin: 4px 0 0; font-size: 12px; opacity: 0.85; }
+        .section    { margin-bottom: 24px; }
+        .section-title { background: #f3f3f3; padding: 8px 12px; font-weight: bold;
+                         font-size: 13px; color: #0176d3; border-left: 4px solid #0176d3;
+                         margin-bottom: 10px; }
+        table       { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        th          { background: #0176d3; color: #fff; padding: 7px 10px;
+                      text-align: left; font-size: 11px; }
+        td          { padding: 7px 10px; border-bottom: 1px solid #e0e0e0; font-size: 11px; }
+        tr:nth-child(even) td { background: #f9f9f9; }
+        .info-grid  { display: table; width: 100%; }
+        .info-row   { display: table-row; }
+        .info-label { display: table-cell; width: 140px; font-weight: bold;
+                      color: #555; padding: 5px 10px 5px 0; }
+        .info-value { display: table-cell; padding: 5px 0; }
+        .badge      { display: inline-block; padding: 2px 8px; border-radius: 10px;
+                      font-size: 10px; font-weight: bold; }
+        .badge-active   { background: #d4edda; color: #155724; }
+        .badge-ongoing  { background: #cce5ff; color: #004085; }
+        .badge-complete { background: #e2e3e5; color: #383d41; }
+        .footer     { margin-top: 30px; border-top: 1px solid #e0e0e0;
+                      padding-top: 10px; font-size: 10px; color: #888; text-align: center; }
+        .medicine-sub { padding-left: 20px; }
+        .medicine-sub td { background: #fffbf0; color: #555; font-size: 10px; }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <div class="header">
+        <h1>Patient Health Report</h1>
+        <p>Generated on: <apex:outputText value="{!reportDate}"/> &nbsp;|&nbsp; Confidential Medical Record</p>
+    </div>
+
+    <!-- PATIENT INFORMATION -->
+    <div class="section">
+        <div class="section-title">Patient Information</div>
+        <div class="info-grid">
+            <div class="info-row">
+                <div class="info-label">Full Name</div>
+                <div class="info-value"><apex:outputText value="{!patient.Name}"/></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Date of Birth</div>
+                <div class="info-value"><apex:outputText value="{!patient.Date_of_Birth__c}"/></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Gender</div>
+                <div class="info-value"><apex:outputText value="{!patient.Gender__c}"/></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Blood Group</div>
+                <div class="info-value"><apex:outputText value="{!patient.Blood_Group__c}"/></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Phone</div>
+                <div class="info-value"><apex:outputText value="{!patient.Phone__c}"/></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Email</div>
+                <div class="info-value"><apex:outputText value="{!patient.Email__c}"/></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Status</div>
+                <div class="info-value"><apex:outputText value="{!patient.Status__c}"/></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Address</div>
+                <div class="info-value"><apex:outputText value="{!patient.Address__c}"/></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- APPOINTMENTS -->
+    <div class="section">
+        <div class="section-title">Appointment History ({!appointments.size} total)</div>
+        <apex:outputPanel rendered="{!NOT(ISBLANK(appointments))}">
+            <table>
+                <tr>
+                    <th>Date &amp; Time</th>
+                    <th>Doctor</th>
+                    <th>Department</th>
+                    <th>Status</th>
+                    <th>Notes</th>
+                </tr>
+                <apex:repeat value="{!appointments}" var="appt">
+                    <tr>
+                        <td><apex:outputText value="{!appt.Appointment_Date__c}"/></td>
+                        <td><apex:outputText value="{!appt.Doctor_Name__c}"/></td>
+                        <td><apex:outputText value="{!appt.Department__c}"/></td>
+                        <td><apex:outputText value="{!appt.Status__c}"/></td>
+                        <td><apex:outputText value="{!appt.Notes__c}"/></td>
+                    </tr>
+                </apex:repeat>
+            </table>
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!ISBLANK(appointments)}">
+            <p style="color:#888;">No appointments on record.</p>
+        </apex:outputPanel>
+    </div>
+
+    <!-- TREATMENTS & MEDICINES -->
+    <div class="section">
+        <div class="section-title">Treatments &amp; Current Medicines</div>
+        <apex:repeat value="{!treatments}" var="treat">
+            <table style="margin-bottom:12px;">
+                <tr>
+                    <th colspan="2">
+                        <apex:outputText value="{!treat.Treatment_Name__c}"/>
+                        &nbsp;|&nbsp; Dr. <apex:outputText value="{!treat.Doctor__c}"/>
+                        &nbsp;|&nbsp; Status: <apex:outputText value="{!treat.Status__c}"/>
+                    </th>
+                </tr>
+                <tr>
+                    <td><strong>Start:</strong> <apex:outputText value="{!treat.Start_Date__c}"/></td>
+                    <td><strong>End:</strong> <apex:outputText value="{!treat.End_Date__c}"/></td>
+                </tr>
+                <apex:outputPanel rendered="{!NOT(ISBLANK(treat.Notes__c))}">
+                    <tr>
+                        <td colspan="2"><strong>Notes:</strong> <apex:outputText value="{!treat.Notes__c}"/></td>
+                    </tr>
+                </apex:outputPanel>
+                <!-- Medicines for this treatment -->
+                <apex:repeat value="{!treat.Medicines__r}" var="med">
+                    <tr class="medicine-sub">
+                        <td>
+                            <strong><apex:outputText value="{!med.Medicine_Name__c}"/></strong>
+                            — <apex:outputText value="{!med.Dosage__c}"/>
+                        </td>
+                        <td>
+                            <apex:outputText value="{!med.Frequency__c}"/>
+                            <apex:outputPanel rendered="{!NOT(ISBLANK(med.Instructions__c))}">
+                                &nbsp;|&nbsp;<apex:outputText value="{!med.Instructions__c}"/>
+                            </apex:outputPanel>
+                        </td>
+                    </tr>
+                </apex:repeat>
+            </table>
+        </apex:repeat>
+        <apex:outputPanel rendered="{!ISBLANK(treatments)}">
+            <p style="color:#888;">No treatments on record.</p>
+        </apex:outputPanel>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        This report is auto-generated from Salesforce Patient Health Tracker.
+        For medical queries contact your healthcare provider.
+        &nbsp;|&nbsp; Generated by Mandar Rahate — Salesforce Developer
+    </div>
+
+</body>
+</html>
+</apex:page>

@@ -1,0 +1,58 @@
+<template>
+    <lightning-card title="Appointments" icon-name="standard:event">
+        <div class="appt-wrap">
+
+            <!-- ADD APPOINTMENT FORM -->
+            <div class="add-form">
+                <h3 class="form-heading">Book New Appointment</h3>
+                <div class="form-grid">
+                    <lightning-input type="datetime-local" label="Appointment Date &amp; Time"
+                        value={newAppt.Appointment_Date__c}
+                        data-field="Appointment_Date__c" onchange={handleChange}></lightning-input>
+
+                    <lightning-input label="Doctor Name"
+                        value={newAppt.Doctor_Name__c}
+                        data-field="Doctor_Name__c" onchange={handleChange}></lightning-input>
+
+                    <lightning-combobox label="Department"
+                        value={newAppt.Department__c}
+                        options={deptOptions}
+                        data-field="Department__c" onchange={handleChange}></lightning-combobox>
+
+                    <lightning-combobox label="Status"
+                        value={newAppt.Status__c}
+                        options={statusOptions}
+                        data-field="Status__c" onchange={handleChange}></lightning-combobox>
+                </div>
+
+                <lightning-textarea label="Notes" value={newAppt.Notes__c}
+                    data-field="Notes__c" onchange={handleChange}></lightning-textarea>
+
+                <div class="form-footer">
+                    <lightning-button label="Book Appointment" variant="brand"
+                        onclick={handleSave}></lightning-button>
+                </div>
+            </div>
+
+            <!-- APPOINTMENTS LIST -->
+            <div class="appt-list">
+                <template for:each={appointments} for:item="appt">
+                    <div key={appt.Id} class="appt-card">
+                        <div class="appt-top">
+                            <span class="appt-date">{appt.Appointment_Date__c}</span>
+                            <span class={appt.statusClass}>{appt.Status__c}</span>
+                        </div>
+                        <div class="appt-doctor">Dr. {appt.Doctor_Name__c} — {appt.Department__c}</div>
+                        <template if:true={appt.Notes__c}>
+                            <div class="appt-notes">{appt.Notes__c}</div>
+                        </template>
+                    </div>
+                </template>
+                <template if:true={noAppointments}>
+                    <div class="empty-msg">No appointments booked yet.</div>
+                </template>
+            </div>
+
+        </div>
+    </lightning-card>
+</template>

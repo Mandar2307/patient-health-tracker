@@ -1,0 +1,84 @@
+<template>
+    <lightning-card title="Treatments &amp; Medicines" icon-name="standard:medication">
+        <div class="treat-wrap">
+
+            <!-- ADD TREATMENT -->
+            <div class="add-section">
+                <h3 class="section-heading">Add Treatment</h3>
+                <div class="form-grid">
+                    <lightning-input label="Treatment Name"
+                        value={newTreatment.Treatment_Name__c}
+                        data-field="Treatment_Name__c" onchange={handleTreatChange}></lightning-input>
+
+                    <lightning-input label="Doctor"
+                        value={newTreatment.Doctor__c}
+                        data-field="Doctor__c" onchange={handleTreatChange}></lightning-input>
+
+                    <lightning-input type="date" label="Start Date"
+                        value={newTreatment.Start_Date__c}
+                        data-field="Start_Date__c" onchange={handleTreatChange}></lightning-input>
+
+                    <lightning-input type="date" label="End Date"
+                        value={newTreatment.End_Date__c}
+                        data-field="End_Date__c" onchange={handleTreatChange}></lightning-input>
+
+                    <lightning-combobox label="Status"
+                        value={newTreatment.Status__c}
+                        options={treatStatusOptions}
+                        data-field="Status__c" onchange={handleTreatChange}></lightning-combobox>
+                </div>
+
+                <lightning-textarea label="Notes" value={newTreatment.Notes__c}
+                    data-field="Notes__c" onchange={handleTreatChange}></lightning-textarea>
+
+                <lightning-button label="Save Treatment" variant="brand"
+                    onclick={saveTreatment} class="save-btn"></lightning-button>
+            </div>
+
+            <!-- TREATMENTS LIST -->
+            <div class="treat-list">
+                <template for:each={treatments} for:item="treat">
+                    <div key={treat.Id} class="treat-card">
+                        <div class="treat-header">
+                            <div>
+                                <span class="treat-name">{treat.Treatment_Name__c}</span>
+                                <span class="treat-doctor"> — Dr. {treat.Doctor__c}</span>
+                            </div>
+                            <span class={treat.statusClass}>{treat.Status__c}</span>
+                        </div>
+                        <div class="treat-dates">
+                            {treat.Start_Date__c} → {treat.End_Date__c}
+                        </div>
+
+                        <!-- MEDICINES LIST -->
+                        <div class="medicines">
+                            <template for:each={treat.Medicines__r} for:item="med">
+                                <div key={med.Id} class="med-row">
+                                    <span class="med-name">{med.Medicine_Name__c}</span>
+                                    <span class="med-dose">{med.Dosage__c}</span>
+                                    <span class="med-freq">{med.Frequency__c}</span>
+                                </div>
+                            </template>
+                        </div>
+
+                        <!-- ADD MEDICINE TO THIS TREATMENT -->
+                        <div class="add-med-row">
+                            <lightning-input label="" placeholder="Medicine name"
+                                data-treatid={treat.Id} data-field="Medicine_Name__c"
+                                onchange={handleMedChange} class="med-input"></lightning-input>
+                            <lightning-input label="" placeholder="Dosage (e.g. 500mg)"
+                                data-treatid={treat.Id} data-field="Dosage__c"
+                                onchange={handleMedChange} class="med-input"></lightning-input>
+                            <lightning-button label="+ Add Medicine" variant="neutral"
+                                data-treatid={treat.Id} onclick={saveMedicine}></lightning-button>
+                        </div>
+                    </div>
+                </template>
+                <template if:true={noTreatments}>
+                    <div class="empty-msg">No treatments added yet.</div>
+                </template>
+            </div>
+
+        </div>
+    </lightning-card>
+</template>

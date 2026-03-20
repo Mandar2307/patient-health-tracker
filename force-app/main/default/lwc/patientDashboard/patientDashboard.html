@@ -1,0 +1,86 @@
+<template>
+    <div class="dashboard-wrap">
+
+        <!-- STATS ROW -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-num">{stats.totalPatients}</div>
+                <div class="stat-label">Total Patients</div>
+            </div>
+            <div class="stat-card stat-blue">
+                <div class="stat-num">{stats.activePatients}</div>
+                <div class="stat-label">Active Patients</div>
+            </div>
+            <div class="stat-card stat-green">
+                <div class="stat-num">{stats.todayAppointments}</div>
+                <div class="stat-label">Today's Appointments</div>
+            </div>
+            <div class="stat-card stat-amber">
+                <div class="stat-num">{stats.ongoingTreatments}</div>
+                <div class="stat-label">Ongoing Treatments</div>
+            </div>
+        </div>
+
+        <!-- SEARCH + REGISTER ROW -->
+        <div class="action-row">
+            <lightning-input
+                type="search"
+                label=""
+                placeholder="Search patients by name..."
+                onchange={handleSearch}
+                class="search-input">
+            </lightning-input>
+            <lightning-button
+                label="+ Register New Patient"
+                variant="brand"
+                onclick={openRegistration}>
+            </lightning-button>
+        </div>
+
+        <!-- PATIENT TABLE -->
+        <div class="table-card">
+            <table class="patient-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>Blood Group</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={patients} for:item="p">
+                        <tr key={p.Id}>
+                            <td class="patient-name">{p.Name}</td>
+                            <td>{p.Gender__c}</td>
+                            <td>{p.Blood_Group__c}</td>
+                            <td>{p.Phone__c}</td>
+                            <td>
+                                <span class={p.statusClass}>{p.Status__c}</span>
+                            </td>
+                            <td>
+                                <a data-id={p.Id} onclick={viewPatient} class="action-link">View</a>
+                                &nbsp;|&nbsp;
+                                <a data-id={p.Id} onclick={openPdfReport} class="action-link">PDF Report</a>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+            <template if:true={noPatients}>
+                <div class="empty-msg">No patients found. Register the first patient above.</div>
+            </template>
+        </div>
+
+        <!-- CHART -->
+        <div class="chart-card">
+            <h3 class="chart-title">Appointments by Department</h3>
+            <div class="chart-container">
+                <canvas id="deptChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+</template>
