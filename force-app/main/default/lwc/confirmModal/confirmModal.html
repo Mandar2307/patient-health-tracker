@@ -1,0 +1,17 @@
+<template>
+    <template if:true={isOpen}>
+        <div class="modal-backdrop" onclick={handleCancel}></div>
+        <section role="dialog" aria-modal="true" aria-labelledby="modal-title" class="modal-container">
+            <div class="modal-header">
+                <h2 id="modal-title" class="modal-title">{title}</h2>
+            </div>
+            <div class="modal-body">
+                <p>{message}</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick={handleCancel}>Cancel</button>
+                <button class="btn-confirm" onclick={handleConfirm}>{confirmLabel}</button>
+            </div>
+        </section>
+    </template>
+</template>

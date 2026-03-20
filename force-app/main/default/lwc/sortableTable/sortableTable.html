@@ -1,0 +1,33 @@
+<template>
+    <div class="table-wrapper">
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+            <thead>
+                <tr>
+                    <template for:each={columns} for:item="col">
+                        <th key={col.fieldName} class="sortable-header" data-field={col.fieldName} onclick={handleSort}>
+                            {col.label}
+                            <template if:true={col.isSorted}>
+                                <span>{col.sortIcon}</span>
+                            </template>
+                        </th>
+                    </template>
+                </tr>
+            </thead>
+            <tbody>
+                <template for:each={pagedData} for:item="row">
+                    <tr key={row.Id}>
+                        <template for:each={columns} for:item="col">
+                            <td key={col.fieldName}>{row[col.fieldName]}</td>
+                        </template>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+
+        <div class="pagination">
+            <button onclick={prevPage} disabled={isFirstPage}>Previous</button>
+            <span>Page {currentPage} of {totalPages}</span>
+            <button onclick={nextPage} disabled={isLastPage}>Next</button>
+        </div>
+    </div>
+</template>

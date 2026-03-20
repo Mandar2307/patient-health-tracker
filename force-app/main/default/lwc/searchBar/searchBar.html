@@ -1,0 +1,30 @@
+<template>
+    <div class="search-container">
+        <lightning-input
+            type="search"
+            label="Search Accounts"
+            placeholder="Type at least 2 characters..."
+            onchange={handleInput}
+            value={searchTerm}>
+        </lightning-input>
+
+        <template if:true={isLoading}>
+            <div class="loading">Searching...</div>
+        </template>
+
+        <template if:true={hasResults}>
+            <ul class="results-list">
+                <template for:each={results} for:item="result">
+                    <li key={result.Id} class="result-item" data-id={result.Id} onclick={handleSelect}>
+                        <span class="result-name">{result.Name}</span>
+                        <span class="result-industry">{result.Industry}</span>
+                    </li>
+                </template>
+            </ul>
+        </template>
+
+        <template if:true={error}>
+            <div class="error-msg">{error}</div>
+        </template>
+    </div>
+</template>

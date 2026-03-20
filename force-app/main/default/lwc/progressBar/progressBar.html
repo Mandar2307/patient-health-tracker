@@ -1,0 +1,18 @@
+<template>
+    <div class="progress-wrapper">
+        <div class="progress-track">
+            <div class="progress-fill" style={progressStyle}></div>
+        </div>
+        <div class="steps-row">
+            <template for:each={stepsWithState} for:item="step">
+                <div key={step.number} class={step.cssClass} data-step={step.number} onclick={handleStepClick}>
+                    <div class="step-circle">
+                        <template if:true={step.isCompleted}>&#10003;</template>
+                        <template if:false={step.isCompleted}>{step.number}</template>
+                    </div>
+                    <div class="step-label">{step.label}</div>
+                </div>
+            </template>
+        </div>
+    </div>
+</template>

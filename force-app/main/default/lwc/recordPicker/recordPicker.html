@@ -1,0 +1,38 @@
+<template>
+    <div class="record-picker">
+        <label class="picker-label">{label}</label>
+
+        <template if:false={selectedRecord}>
+            <input
+                type="text"
+                class="picker-input"
+                placeholder="Search..."
+                oninput={handleSearch}
+                value={inputValue} />
+
+            <template if:true={showDropdown}>
+                <ul class="picker-dropdown">
+                    <template for:each={searchResults} for:item="rec">
+                        <li key={rec.Id}
+                            class="picker-item"
+                            data-id={rec.Id}
+                            data-name={rec.Name}
+                            onclick={handleSelect}>
+                            {rec.Name}
+                        </li>
+                    </template>
+                    <template if:true={noResults}>
+                        <li class="picker-no-results">No results found</li>
+                    </template>
+                </ul>
+            </template>
+        </template>
+
+        <template if:true={selectedRecord}>
+            <div class="selected-pill">
+                <span>{selectedRecord.name}</span>
+                <button class="clear-btn" onclick={handleClear}>✕</button>
+            </div>
+        </template>
+    </div>
+</template>
